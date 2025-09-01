@@ -110,7 +110,7 @@ namespace Calculator
                 _ => throw new NotSupportedException()
             };
 
-            _ = double.TryParse(resultBox.Text, out currentNumber);
+            currentNumber = ParseResultBox();
 
             ExecuteCommand(previousNumber, currentNumber, currentOperation);
         }
@@ -124,7 +124,7 @@ namespace Calculator
         {
             if (isFirstNumber)
             {
-                double.TryParse(resultBox.Text, out previousNumber);
+                previousNumber = ParseResultBox();
                 isFirstNumber = false;
             }
             else
