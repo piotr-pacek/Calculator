@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using Calculator.Data;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Calculator
 {
@@ -6,14 +8,23 @@ namespace Calculator
     {
         private bool isDecimal;
         private bool isFirstNumber;
+        private bool isWaitingForSecondNumber;
         private bool canOverwriteResultBox;
         private bool resultCalculated;
 
         private double previousNumber;
         private double currentNumber;
-        private Operation currentOperation;
+        private Operation? currentOperation;
 
         private readonly string decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+        private readonly OperationRepository _repository;
+
+        public CalculatorEngine(OperationRepository repository)
+        {
+            _repository = repository;
+            ResetCalculator();
+        }
 
         public string CurrentDisplay { get; private set; } = "0";
 
@@ -36,24 +47,33 @@ namespace Calculator
                 CurrentDisplay = inputChar.ToString();
 
                 if (resultCalculated)
+                {
                     isFirstNumber = true;
+                    currentOperation = null;
+                }
 
+                isWaitingForSecondNumber = false;
                 canOverwriteResultBox = false;
                 resultCalculated = false;
             }
-
         }
 
         public void ExecuteCommand(string operation)
         {
+            if (CurrentDisplay == "E")
+                return;
+
             currentOperation = operation switch
             {
                 "plusButton" or "+" => Operation.Add,
                 "minusButton" or "-" => Operation.Subtract,
                 "multiplyButton" or "*" => Operation.Multiply,
                 "divideButton" or "/" => Operation.Divide,
-                _ => throw new NotSupportedException()
+                _ => throw new ArgumentException("Unhandled value: " + operation.ToString())
             };
+
+            if (isWaitingForSecondNumber)
+                return;
 
             currentNumber = ParseResultBox();
 
@@ -72,13 +92,19 @@ namespace Calculator
 
             canOverwriteResultBox = true;
             isDecimal = false;
+            isWaitingForSecondNumber = true;
         }
 
         public void ExecuteEqualsAction()
         {
+            if (!currentOperation.HasValue || CurrentDisplay == "E")
+                return;
+
+            double inputNumber = ParseResultBox();
+
             if (isFirstNumber)
             {
-                previousNumber = ParseResultBox();
+                previousNumber = inputNumber;
                 isFirstNumber = false;
             }
             else
@@ -86,9 +112,17 @@ namespace Calculator
                 if (!resultCalculated)
                     currentNumber = ParseResultBox();
 
-                previousNumber = CalculateResult(previousNumber, currentNumber, currentOperation);
-
-                CurrentDisplay = previousNumber.ToString("G", CultureInfo.CurrentCulture);
+                var firstNumber = previousNumber;
+                if (currentNumber == 0 && currentOperation == Operation.Divide)
+                {
+                    CurrentDisplay = "E";
+                }
+                else
+                {
+                    previousNumber = CalculateResult(firstNumber, currentNumber, currentOperation);
+                    _repository.AddOperation($"{firstNumber} {GetSymbol(currentOperation)} {currentNumber}", previousNumber.ToString());
+                    CurrentDisplay = previousNumber.ToString("G", CultureInfo.CurrentCulture);
+                }
             }
 
             canOverwriteResultBox = true;
@@ -96,7 +130,7 @@ namespace Calculator
             isDecimal = false;
         }
 
-        private static double CalculateResult(double firstNumber, double secondNumber, Operation operation)
+        private static double CalculateResult(double firstNumber, double secondNumber, Operation? operation)
         {
             return operation switch
             {
@@ -104,13 +138,14 @@ namespace Calculator
                 Operation.Subtract => firstNumber - secondNumber,
                 Operation.Multiply => firstNumber * secondNumber,
                 Operation.Divide => firstNumber / secondNumber,
-                _ => throw new NotSupportedException(),
+                _ => throw new InvalidEnumArgumentException("Unexpected enum value: " + operation.ToString())
             };
         }
 
         public void Negate()
         {
-            if (CurrentDisplay != "0")
+
+            if (CurrentDisplay != "0" && !canOverwriteResultBox && CurrentDisplay != "E")
             {
                 var negatedNumber = ParseResultBox() * -1;
                 currentNumber = negatedNumber;
@@ -120,16 +155,19 @@ namespace Calculator
 
         public void Backspace()
         {
+            if (canOverwriteResultBox || CurrentDisplay == "E")
+                return;
+
             if (CurrentDisplay.Length == 1)
             {
                 CurrentDisplay = "0";
             }
             else
             {
-                if (CurrentDisplay[CurrentDisplay.Length - 1] == decimalSeparator[0])
+                if (CurrentDisplay[^1] == decimalSeparator[0])
                     isDecimal = false;
                 CurrentDisplay = CurrentDisplay[..^1];
-            }   
+            }
         }
 
         private double ParseResultBox()
@@ -137,10 +175,11 @@ namespace Calculator
             return double.TryParse(CurrentDisplay, out var number) ? number : 0;
         }
 
-        public void Reset()
+        public void ResetCalculator()
         {
             CurrentDisplay = "0";
             currentNumber = 0;
+            currentOperation = null;
             isFirstNumber = true;
             resultCalculated = false;
             canOverwriteResultBox = true;
@@ -151,13 +190,32 @@ namespace Calculator
         {
             if (resultCalculated)
             {
-                Reset();
+                ResetCalculator();
             }
             else
             {
                 CurrentDisplay = "0";
                 currentNumber = 0;
             }
+        }
+
+        private static string GetSymbol(Operation? op) => op switch
+        {
+            Operation.Add => "+",
+            Operation.Subtract => "-",
+            Operation.Multiply => "*",
+            Operation.Divide => "/",
+            _ => "?"
+        };
+
+        public List<OperationEntity> GetHistory()
+        {
+            return _repository.GetOperations();
+        }
+
+        public void ResetDatabase()
+        {
+            _repository.ClearOperations();
         }
 
         internal enum Operation
