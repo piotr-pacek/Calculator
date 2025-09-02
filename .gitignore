@@ -1,3 +1,5 @@
 /.vs/
-/bin/
-/obj/
+/Calculator/bin/
+/Calculator/obj/
+/Calculator.Tests/bin/
+/Calculator.Tests/obj/

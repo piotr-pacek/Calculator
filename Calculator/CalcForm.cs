@@ -1,6 +1,5 @@
 using Calculator.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Windows.Forms;
+using System.Globalization;
 
 namespace Calculator
 {
@@ -162,11 +161,17 @@ namespace Calculator
         private async Task<bool> FindBestDay()
         {
             string currency = currencyBox.SelectedItem?.ToString();
+
+            currencyValueTextbox.Text = currencyValueTextbox.Text
+                .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+
             if (string.IsNullOrEmpty(currency))
             {
                 MessageBox.Show("Choose currency.");
                 return false;
             }
+
 
             if (!decimal.TryParse(currencyValueTextbox.Text, out decimal amount))
             {

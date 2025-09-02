@@ -63,7 +63,7 @@ namespace Calculator
             if (CurrentDisplay == "E")
                 return;
 
-            currentOperation = operation switch
+            var newOperation = operation switch
             {
                 "plusButton" or "+" => Operation.Add,
                 "minusButton" or "-" => Operation.Subtract,
@@ -73,7 +73,10 @@ namespace Calculator
             };
 
             if (isWaitingForSecondNumber)
+            {
+                currentOperation = newOperation;
                 return;
+            }
 
             currentNumber = ParseResultBox();
 
@@ -90,6 +93,7 @@ namespace Calculator
                 CurrentDisplay = previousNumber.ToString("G", CultureInfo.CurrentCulture);
             }
 
+            currentOperation = newOperation;
             canOverwriteResultBox = true;
             isDecimal = false;
             isWaitingForSecondNumber = true;
