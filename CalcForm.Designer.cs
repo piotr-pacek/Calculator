@@ -46,6 +46,9 @@
             divideButton = new Button();
             commaButton = new Button();
             negateButton = new Button();
+            cButton = new Button();
+            ceButton = new Button();
+            backspaceButton = new Button();
             SuspendLayout();
             // 
             // digit1
@@ -228,11 +231,44 @@
             negateButton.UseVisualStyleBackColor = true;
             negateButton.Click += NegateButton_Click;
             // 
+            // cButton
+            // 
+            cButton.Location = new Point(124, 41);
+            cButton.Name = "cButton";
+            cButton.Size = new Size(50, 25);
+            cButton.TabIndex = 18;
+            cButton.Text = "C";
+            cButton.UseVisualStyleBackColor = true;
+            cButton.Click += CButton_Click;
+            // 
+            // ceButton
+            // 
+            ceButton.Location = new Point(68, 41);
+            ceButton.Name = "ceButton";
+            ceButton.Size = new Size(50, 25);
+            ceButton.TabIndex = 19;
+            ceButton.Text = "CE";
+            ceButton.UseVisualStyleBackColor = true;
+            ceButton.Click += CEButton_Click;
+            // 
+            // backspaceButton
+            // 
+            backspaceButton.Location = new Point(12, 41);
+            backspaceButton.Name = "backspaceButton";
+            backspaceButton.Size = new Size(50, 25);
+            backspaceButton.TabIndex = 20;
+            backspaceButton.Text = "←";
+            backspaceButton.UseVisualStyleBackColor = true;
+            backspaceButton.Click += BackspaceButton_Click;
+            // 
             // CalcForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(243, 203);
+            Controls.Add(backspaceButton);
+            Controls.Add(ceButton);
+            Controls.Add(cButton);
             Controls.Add(negateButton);
             Controls.Add(commaButton);
             Controls.Add(divideButton);
@@ -279,5 +315,8 @@
         private Button divideButton;
         private Button commaButton;
         private Button negateButton;
+        private Button cButton;
+        private Button ceButton;
+        private Button backspaceButton;
     }
 }
