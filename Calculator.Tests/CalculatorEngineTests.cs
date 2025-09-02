@@ -13,9 +13,9 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('5');
+            engine.WriteCharacter('5');
             engine.ExecuteCommand("+");
-            engine.WriteDigit('3');
+            engine.WriteCharacter('3');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("8", engine.CurrentDisplay);
@@ -26,10 +26,10 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('1');
-            engine.WriteDigit('0'); // "10"
+            engine.WriteCharacter('1');
+            engine.WriteCharacter('0'); // "10"
             engine.ExecuteCommand("-");
-            engine.WriteDigit('4');
+            engine.WriteCharacter('4');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("6", engine.CurrentDisplay);
@@ -40,9 +40,9 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('7');
+            engine.WriteCharacter('7');
             engine.ExecuteCommand("*");
-            engine.WriteDigit('6');
+            engine.WriteCharacter('6');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("42", engine.CurrentDisplay);
@@ -53,10 +53,10 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('2');
-            engine.WriteDigit('0'); // "20"
+            engine.WriteCharacter('2');
+            engine.WriteCharacter('0'); // "20"
             engine.ExecuteCommand("/");
-            engine.WriteDigit('5');
+            engine.WriteCharacter('5');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("4", engine.CurrentDisplay);
@@ -67,9 +67,9 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('9');
+            engine.WriteCharacter('9');
             engine.ExecuteCommand("/");
-            engine.WriteDigit('0');
+            engine.WriteCharacter('0');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("E", engine.CurrentDisplay);
@@ -81,12 +81,12 @@ namespace Calculator.Tests
             var engine = CreateEngine();
 
             // 2 + 3 = 5 => 5 * 4
-            engine.WriteDigit('2');
+            engine.WriteCharacter('2');
             engine.ExecuteCommand("+");
-            engine.WriteDigit('3');
+            engine.WriteCharacter('3');
             engine.ExecuteEqualsAction(); // = 5
             engine.ExecuteCommand("*");
-            engine.WriteDigit('4');
+            engine.WriteCharacter('4');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("20", engine.CurrentDisplay);
@@ -98,11 +98,11 @@ namespace Calculator.Tests
             var engine = CreateEngine();
 
             // 4 + 1 * 3
-            engine.WriteDigit('4');
+            engine.WriteCharacter('4');
             engine.ExecuteCommand("+");
-            engine.WriteDigit('1');
+            engine.WriteCharacter('1');
             engine.ExecuteCommand("*");
-            engine.WriteDigit('3');
+            engine.WriteCharacter('3');
             engine.ExecuteEqualsAction();
 
             Assert.Equal("15", engine.CurrentDisplay);
@@ -114,7 +114,7 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('9');
+            engine.WriteCharacter('9');
             engine.Negate();
 
             Assert.Equal("-9", engine.CurrentDisplay);
@@ -125,9 +125,9 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('1');
-            engine.WriteDigit('2');
-            engine.WriteDigit('3');
+            engine.WriteCharacter('1');
+            engine.WriteCharacter('2');
+            engine.WriteCharacter('3');
             engine.Backspace();
 
             Assert.Equal("12", engine.CurrentDisplay);
@@ -138,9 +138,9 @@ namespace Calculator.Tests
         {
             var engine = CreateEngine();
 
-            engine.WriteDigit('5');
+            engine.WriteCharacter('5');
             engine.ExecuteCommand("+");
-            engine.WriteDigit('5');
+            engine.WriteCharacter('5');
             engine.ExecuteEqualsAction();
 
             engine.ResetCalculator();

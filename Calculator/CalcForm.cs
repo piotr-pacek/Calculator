@@ -46,7 +46,7 @@ namespace Calculator
         {
             if (char.IsDigit(e.KeyChar) || e.KeyChar == '.')
             {
-                engine.WriteDigit(e.KeyChar);
+                engine.WriteCharacter(e.KeyChar);
             }
             else if (operators.Contains(e.KeyChar))
             {
@@ -67,7 +67,7 @@ namespace Calculator
                 switch (keyData)
                 {
                     case Keys.Decimal:
-                        engine.WriteDigit('.');
+                        engine.WriteCharacter('.');
                         break;
                     case Keys.Escape:
                         engine.ResetCalculator();
@@ -96,7 +96,7 @@ namespace Calculator
         private void Button_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            engine.WriteDigit(button.Text[0]);
+            engine.WriteCharacter(button.Text[0]);
             resultBox.Text = engine.CurrentDisplay;
         }
 
